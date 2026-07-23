@@ -1,0 +1,74 @@
+/* ===========================
+   Login Page
+=========================== */
+
+.Login-Body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #F4F5F7;
+}
+
+/* ===========================
+   Login Container
+=========================== */
+
+.Login-main-container {
+    width: 420px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 15px 35px rgba(0,0,0,.08);
+}
+
+/* ===========================
+   Header
+=========================== */
+
+.Login-Header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.Login-Header-logo {
+    font-size: 38px;
+    font-weight: 700;
+    color: #0C66E4;
+    margin-bottom: 10px;
+}
+
+.Login-Header-title {
+    color: #5E6C84;
+    font-size: 16px;
+}
+
+/* ===========================
+   Form
+=========================== */
+
+.Login-Form {
+    display: flex;
+    flex-direction: column;
+}
+
+.Login-Form-label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #172B4D;
+}
+
+.Login-Form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #000000;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: .2s;
+}
+
+.Login-Form-input:focus {
+    outline: none;
+    border-color: #0C66E4;
+    box-shadow: 0 0 0 3px rgba(12,102,228,.15);
+}

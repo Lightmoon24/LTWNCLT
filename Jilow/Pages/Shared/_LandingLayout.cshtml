@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Jilow</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/landinglayout.css" />
+</head>
+<body>
+    <header class="Home-TopNavBar">
+        <div class="container Home-TopNavBar-container">
+            <a asp-page="/Index" class="Home-TopNavBar-logo">
+                Jilow
+            </a>
+            <nav class="Home-TopNavBar-menu">
+                <a href="#Feature">
+                    Features
+                </a>
+                <a href="#Preview">
+                    Preview
+                </a>
+                <a href="#Contact">
+                    Contact
+                </a>
+            </nav>
+            <div class="Home-TopNavBar-action">
+                <a asp-page="/Account/Login" class="btn btn-outline-primary Home-TopNavBar-btnLogin">
+                    Đăng nhập
+                </a>
+                <a asp-page="/Account/Register" class="btn btn-primary Home-TopNavBar-btnRegister">
+                    Bắt đầu
+                </a>
+            </div>
+        </div>
+    </header>
+    <main>
+        @RenderBody()
+    </main>
+    <footer class="Home-Footer">
+        <div class="container Home-Footer-container">
+            © 2026 Jilow
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Jilow</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/layout.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+<header class="topbar">
+    <div class="logo">
+        Jilow
+    </div>
+    <input class="search"
+           type="text"
+           placeholder="Search..." />
+    <div class="top-right">
+        <button class="btn btn-primary">
+            + Create
+        </button>
+        <button class="icon-btn">
+            🔔
+        </button>
+        <img src="~/images/Avatar.png"
+             class="avatar"/>
+    </div>
+</header>
+<div class="app">
+    <aside class="sidebar">
+        <a asp-page="/Dashboard">
+            Dashboard
+        </a>
+        <a asp-page="/Projects">
+            Projects
+        </a>
+        <a asp-page="/Board">
+            Board
+        </a>
+        <a asp-page="/Inbox">
+            Inbox
+        </a>
+        <a asp-page="/Profile">
+            Profile
+        </a>
+        <a asp-page="/Settings">
+            Settings
+        </a>
+    </aside>
+    <main class="content">
+        @RenderBody()
+    </main>
+</div>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

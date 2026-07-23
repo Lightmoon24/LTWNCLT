@@ -1,0 +1,68 @@
+﻿@page
+@{
+    Layout = "_LandingLayout";
+    ViewData["Title"] = "Home";
+}
+<section class="Home-Hero">
+    <div class="container Home-Hero-container">
+        <div class="Home-Hero-left">
+            <h1 class="Home-Hero-title">
+                Quản lý công việc
+                dễ dàng hơn.
+            </h1>
+            <p class="Home-Hero-description">
+                Jilow giúp bạn quản lý
+                Project, Ticket,
+                Deadline và Inbox
+                trên cùng một nền tảng.
+            </p>
+            <div class="Home-Hero-action">
+                <a asp-page="/Account/Register"
+                   class="btn btn-primary btn-lg Home-Hero-btnStart">
+                    Bắt đầu miễn phí
+                </a>
+                <a href="#Preview"
+                   class="btn btn-light btn-lg Home-Hero-btnDemo">
+                    Xem Demo
+                </a>
+            </div>
+        </div>
+        <div class="Home-Hero-right">
+            <img src="~/images/dashboard.png"
+                 class="Home-Hero-image"/>
+        </div>
+    </div>
+</section>
+<section class="Home-Feature" id="Feature">
+    <div class="container">
+        <h2 class="Home-Feature-title">
+            Tính năng
+        </h2>
+        <div class="Home-Feature-grid">
+            <div class="Home-Feature-card">
+                📋
+                <h4>
+                    Kanban Board
+                </h4>
+            </div>
+            <div class="Home-Feature-card">
+                👥
+                <h4>
+                    Team Work
+                </h4>
+            </div>
+            <div class="Home-Feature-card">
+                💬
+                <h4>
+                    Inbox
+                </h4>
+            </div>
+            <div class="Home-Feature-card">
+                📈
+                <h4>
+                    Dashboard
+                </h4>
+            </div>
+        </div>
+    </div>
+</section>
