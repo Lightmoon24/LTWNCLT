@@ -1,0 +1,4 @@
+# Environment settings
+appsettings.Development.json
+appsettings.Staging.json
+appsettings.Production.json

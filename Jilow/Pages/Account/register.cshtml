@@ -1,0 +1,44 @@
+@page
+@model IndexModel
+@{
+    Layout = "_AuthmeLayout";
+    ViewData["Title"] = "Register";
+}
+<div>
+    <div class="Login-Body">
+
+        <div class="Login-main-container">
+
+            <div class="Login-Header">
+                <h2 class="Login-Header-logo">Jilow</h2>
+                <p class="Login-Header-title">
+                    Đăng nhập để tiếp tục
+                </p>
+            </div>
+
+            <div class="Login-Form">
+                <label class="Login-Form-label">
+                    Email
+                </label>
+                <input type="email" class="Login-Form-input" placeholder="Nhập email của bạn" />
+                <label class="Login-Form-label">
+                    Password
+                </label>
+                <input type="password" class="Login-Form-input" placeholder="Nhập mật khẩu của bạn" />
+                <label class="Login-Form-label">
+                        Confirm Password
+                </label>
+                <input type="password" class="Login-Form-input" placeholder="Nhập lại mật khẩu của bạn"/>
+                    <div class="Login-login-btn">
+                        <button>
+                            Đăng Ký
+                        </button>
+                    </div>
+                </div>
+
+                <div class="Login-ForgetPassword-text">
+                    <a asp-page="/Account/login">Bạn đã có tài khoản? đăng nhập ngay</a>
+                </div>
+            </div>
+        </div>
+    </div>
