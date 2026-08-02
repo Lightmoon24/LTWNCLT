@@ -1,5 +1,5 @@
 @page
-@model IndexModel
+@model LoginModel
 
 @{
     Layout = "_AuthmeLayout";
@@ -7,38 +7,56 @@
 }
 
 <div class="Login-Body">
-
     <div class="Login-main-container">
 
         <div class="Login-Header">
-
             <h2 class="Login-Header-logo">Jilow</h2>
-
             <p class="Login-Header-title">
                 Đăng nhập để tiếp tục
             </p>
-
         </div>
 
-        <div class="Login-Form">
-            <label class="Login-Form-label">
-                Email
-            </label>
-            <input type="email" class="Login-Form-input" placeholder="Nhập email của bạn" />
-            <label class="Login-Form-label">
-                Password
-            </label>
-            <input type="password" class="Login-Form-input" placeholder="Nhập mật khẩu của bạn" />
-        <div class="Login-login-btn">
-            <button class="btn">
-            Đăng Nhập                
-            </button>
-        </div>
-        </div>
+        <form method="post">
+
+            <div class="Login-Form">
+
+                <label class="Login-Form-label">
+                    Email
+                </label>
+
+                <input asp-for="Email"
+                       type="email"
+                       class="Login-Form-input"
+                       placeholder="Nhập email của bạn" />
+
+                <label class="Login-Form-label">
+                    Password
+                </label>
+
+                <input asp-for="Password"
+                       type="password"
+                       class="Login-Form-input"
+                       placeholder="Nhập mật khẩu của bạn" />
+
+                <span style="color:red">
+                    @Model.ErrorMessage
+                </span>
+
+                <div class="Login-login-btn">
+                    <button type="submit">
+                        Đăng nhập
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
         <div class="Login-ForgetPassword-text">
-            <a asp-page="/Account/login">Bạn không đăng nhập được?</a>
+            <a asp-page="/Account/Login">Bạn không đăng nhập được?</a>
             •
-            <a asp-page="/Account/register">Tạo tài khoản</a>
+            <a asp-page="/Account/Register">Tạo tài khoản</a>
         </div>
+
     </div>
 </div>

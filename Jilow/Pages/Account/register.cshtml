@@ -1,44 +1,73 @@
 @page
-@model IndexModel
+@model RegisterModel
+
 @{
     Layout = "_AuthmeLayout";
     ViewData["Title"] = "Register";
 }
-<div>
-    <div class="Login-Body">
 
-        <div class="Login-main-container">
+<div class="Login-Body">
 
-            <div class="Login-Header">
-                <h2 class="Login-Header-logo">Jilow</h2>
-                <p class="Login-Header-title">
-                    Đăng nhập để tiếp tục
-                </p>
-            </div>
+    <div class="Login-main-container">
+
+        <div class="Login-Header">
+            <h2 class="Login-Header-logo">Jilow</h2>
+            <p class="Login-Header-title">
+                Đăng ký tài khoản
+            </p>
+        </div>
+
+        <form method="post">
 
             <div class="Login-Form">
+
                 <label class="Login-Form-label">
                     Email
                 </label>
-                <input type="email" class="Login-Form-input" placeholder="Nhập email của bạn" />
+
+                <input asp-for="Email"
+                       type="email"
+                       class="Login-Form-input"
+                       placeholder="Nhập email của bạn" />
+
                 <label class="Login-Form-label">
                     Password
                 </label>
-                <input type="password" class="Login-Form-input" placeholder="Nhập mật khẩu của bạn" />
+
+                <input asp-for="Password"
+                       type="password"
+                       class="Login-Form-input"
+                       placeholder="Nhập mật khẩu của bạn" />
+
                 <label class="Login-Form-label">
-                        Confirm Password
+                    Confirm Password
                 </label>
-                <input type="password" class="Login-Form-input" placeholder="Nhập lại mật khẩu của bạn"/>
-                    <div class="Login-login-btn">
-                        <button>
-                            Đăng Ký
-                        </button>
-                    </div>
+
+                <input asp-for="ConfirmPassword"
+                       type="password"
+                       class="Login-Form-input"
+                       placeholder="Nhập lại mật khẩu của bạn" />
+
+                <span style="color:red">
+                    @Model.ErrorMessage
+                </span>
+
+                <div class="Login-login-btn">
+                    <button type="submit">
+                        Đăng Ký
+                    </button>
                 </div>
 
-                <div class="Login-ForgetPassword-text">
-                    <a asp-page="/Account/login">Bạn đã có tài khoản? đăng nhập ngay</a>
-                </div>
             </div>
+
+        </form>
+
+        <div class="Login-ForgetPassword-text">
+            <a asp-page="/Account/Login">
+                Bạn đã có tài khoản? Đăng nhập ngay
+            </a>
         </div>
+
     </div>
+
+</div>

@@ -1,5 +1,7 @@
 using Jilow.Data;
 using Microsoft.EntityFrameworkCore;
+using Supabase;
+
 namespace Jilow
 {
     public class Program
@@ -8,13 +10,35 @@ namespace Jilow
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Đọc cấu hình Supabase
+            var supabaseUrl = builder.Configuration["Supabase:Url"];
+            var supabaseAnonKey = builder.Configuration["Supabase:AnonKey"];
+
             // Razor Pages
             builder.Services.AddRazorPages();
 
-            // Entity Framework Core
+            // Entity Framework
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(
                     builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // Supabase
+            builder.Services.AddSingleton<Client>(_ =>
+            {
+                var options = new SupabaseOptions
+                {
+                    AutoConnectRealtime = false
+                };
+
+                var client = new Client(
+                    supabaseUrl!,
+                    supabaseAnonKey!,
+                    options);
+
+                client.InitializeAsync().GetAwaiter().GetResult();
+
+                return client;
+            });
 
             var app = builder.Build();
 
@@ -25,15 +49,11 @@ namespace Jilow
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthorization();
 
             app.MapStaticAssets();
-
-            app.MapRazorPages()
-                .WithStaticAssets();
+            app.MapRazorPages().WithStaticAssets();
 
             app.Run();
         }

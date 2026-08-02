@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Jilow")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0639c88e5a8c136a91ad43b8e7386029f3ec26b0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+926e6ebe297f764262d16464b41d0d3f251db394")]
 [assembly: System.Reflection.AssemblyProductAttribute("Jilow")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Jilow")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
