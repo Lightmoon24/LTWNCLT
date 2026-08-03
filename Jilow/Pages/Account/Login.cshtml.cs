@@ -30,7 +30,13 @@ public class LoginModel : PageModel
 
             if (session?.User != null)
             {
-                return RedirectToPage("/Index");
+                HttpContext.Session.SetString("UserId", session.User.Id);
+                HttpContext.Session.SetString("Email", session.User.Email);
+                
+                // Nếu sau này có role
+                // HttpContext.Session.SetString("Role", "Admin");
+
+                return RedirectToPage("/Dashboard/Dashboard");
             }
 
             ErrorMessage = "Email hoặc mật khẩu không đúng.";

@@ -13,10 +13,16 @@ namespace Jilow
             // Đọc cấu hình Supabase
             var supabaseUrl = builder.Configuration["Supabase:Url"];
             var supabaseAnonKey = builder.Configuration["Supabase:AnonKey"];
-
             // Razor Pages
             builder.Services.AddRazorPages();
+            builder.Services.AddDistributedMemoryCache();
 
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
             // Entity Framework
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(
@@ -50,6 +56,7 @@ namespace Jilow
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseSession();
             app.UseAuthorization();
 
             app.MapStaticAssets();
