@@ -1,75 +1,115 @@
-body{
-    margin:0;
-    font-family:Segoe UI;
-    background:#f4f5f7;
-}
-/*==========================*/
-.topbar{
-    height:60px;
-    background:#0d6efd;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 20px;
-    color:white;
-}
-/*==========================*/
-.logo{
-    font-size:24px;
-    font-weight:bold;
-}
-/*==========================*/
-.search{
-    width:350px;
-    border:none;
-    border-radius:8px;
-    padding:8px 15px;
-}
-/*==========================*/
-.top-right{
-    display:flex;
-    align-items:center;
-    gap:15px;
-}
-.avatar{
-    width:40px;
-    height:40px;
-    border-radius:50%;
-}
-.icon-btn{
-    border:none;
-    background:none;
-    color:white;
-    font-size:22px;
-}
-/*==========================*/
-.app{
-    display:flex;
-    height:calc(100vh - 60px);
-}
-/*==========================*/
-.sidebar{
-    width:10%;
-    background:white;
-    display:flex;
-    flex-direction:column;
-    padding:20px;
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: #f4f5f7;
 }
 
-.sidebar a{
-    text-decoration:none;
-    color:#000;
-    padding:12px;
-    border-radius:8px;
-    margin-bottom:8px;
+/* ========================== TOPBAR ========================== */
+
+.topbar {
+    height: 60px;
+    background: #0d6efd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    color: white;
 }
-.sidebar a:hover{
-    background:#000;
-    color:white;
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
 }
-/*==========================*/
-.content{
-    flex:1;
-    padding:30px;
-    overflow:auto;
+
+.search {
+    width: 100%;
+    max-width: 350px;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 15px;
+    outline: none;
+}
+
+.top-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.icon-btn {
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+/* ========================== LAYOUT ========================== */
+
+.app {
+    display: flex;
+    min-height: calc(100vh - 60px);
+}
+
+/* ========================== SIDEBAR ========================== */
+
+.sidebar {
+    max-width: 220px;
+    background: white;
+    padding: 20px 10px;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: black;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: 0.2s;
+}
+
+.sidebar a:hover {
+    background: black;
+    color: white;
+}
+
+/* ========================== CONTENT ========================== */
+
+.content {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+/* ========================== RESPONSIVE ========================== */
+
+@media (max-width: 768px) {
+
+    .search {
+        max-width: 180px;
+    }
+
+    .sidebar {
+        width: 70px;
+        padding: 20px 5px;
+    }
+
+    .sidebar a {
+        justify-content: center;
+    }
+
+    .sidebar a span {
+        display: none;
+    }
 }

@@ -30,31 +30,37 @@
 
         </div>
     </header>
-    <div class="app">
-        <aside class="sidebar">
-            <a asp-page="/Dashboard">
-                <i class="fa."></i> Dashboard
-            </a>
-            <a asp-page="/Projects">
-                Projects
-            </a>
-            <a asp-page="/Board">
-                Board
-            </a>
-            <a asp-page="/Inbox">
-                Inbox
-            </a>
-            <a asp-page="/Profile">
-                Profile
-            </a>
-            <a asp-page="/Settings">
-                Settings
-            </a>
-        </aside>
-        <main class="content">
-            @RenderBody()
-        </main>
-    </div>
+<div class="app">
+    <aside class="sidebar">
+        <a asp-page="/Dashboard/Dashboard">
+            <i class="fa-solid fa-table-columns"></i>
+            <span>Dashboard</span>
+        </a>
+        <a asp-page="/Projects">
+            <i class="fa-solid fa-diagram-project"></i>
+            <span>Projects</span>
+        </a>
+        <a asp-page="/Board">
+            <i class="fa-solid fa-list-check"></i>
+            <span>Board</span>
+        </a>
+        <a asp-page="/Inbox">
+            <i class="fa-solid fa-inbox"></i>
+            <span>Inbox</span>
+        </a>
+        <a asp-page="/Profile/Profile">
+            <i class="fa-solid fa-user"></i>
+            <span>Profile</span>
+        </a>
+        <a asp-page="/Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+        </a>
+    </aside>
+    <main class="content">
+        @RenderBody()
+    </main>
+</div>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

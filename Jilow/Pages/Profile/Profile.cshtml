@@ -1,9 +1,120 @@
 @page
 @model Jilow.Pages.Profile.Profile
+
 @{
     ViewData["Title"] = "Profile";
 }
 
-<h1>@ViewData["Title"]</h1>
-<div>
+<link rel="stylesheet"
+      href="~/css/Profile.css"
+      asp-append-version="true" />
+
+<div class="profile-container">
+
+    <!-- Banner -->
+    <div class="profile-banner"></div>
+
+    <!-- Header -->
+    <div class="profile-header">
+
+    <div class="profile-header-user">
+
+        <div class="profile-header-avatar">
+            <img src="~/images/Avatar.png" alt="Avatar">
+        </div>
+
+        <div class="profile-header-info">
+            <h2>Alexa Rawles</h2>
+            <p>@HttpContext.Session.GetString("Email")</p>
+        </div>
+    </div>
+
+    <div class="profile-header-action">
+
+        <button class="profile-header-button">
+            Edit
+        </button>
+
+        <form method="post" asp-page-handler="Logout">
+            <button type="submit" class="profile-header-logout">
+                Logout
+            </button>
+        </form>
+
+    </div>
+
+</div>
+
+    <!-- Form -->
+    <div class="profile-form">
+
+        <div class="profile-form-group">
+            <label>Full Name</label>
+            <input class="profile-form-input"
+                   type="text"
+                   placeholder="Your First Name">
+        </div>
+
+        <div class="profile-form-group">
+            <label>Nick Name</label>
+            <input class="profile-form-input"
+                   type="text"
+                   placeholder="Your Nick Name">
+        </div>
+
+        <div class="profile-form-group">
+            <label>Gender</label>
+            <select class="profile-form-select">
+                <option>Male</option>
+                <option>Female</option>
+            </select>
+        </div>
+
+        <div class="profile-form-group">
+            <label>Country</label>
+            <select class="profile-form-select">
+                <option>Vietnam</option>
+            </select>
+        </div>
+
+        <div class="profile-form-group">
+            <label>Language</label>
+            <select class="profile-form-select">
+                <option>English</option>
+            </select>
+        </div>
+
+        <div class="profile-form-group">
+            <label>Time Zone</label>
+            <select class="profile-form-select">
+                <option>GMT +7</option>
+            </select>
+        </div>
+
+    </div>
+
+    <!-- Email -->
+    <div class="profile-email">
+
+        <h3>My Email Address</h3>
+
+        <div class="profile-email-item">
+
+            <div class="profile-email-icon">
+                ✉
+            </div>
+
+            <div class="profile-email-info">
+                <strong>@HttpContext.Session.GetString("Email")</strong>
+                <p>1 month ago</p>
+            </div>
+
+        </div>
+
+        <button class="profile-email-button">
+            + Add Email Address
+        </button>
+
+    </div>
+
 </div>
