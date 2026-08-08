@@ -19,6 +19,17 @@ public class LoginModel : PageModel
 
     public string ErrorMessage { get; set; } = string.Empty;
 
+    public string SuccessMessage { get; set; } = string.Empty;
+
+    public void OnGet()
+    {
+        // Lấy thông báo từ quá trình đăng ký
+        if (TempData["SuccessMessage"] != null)
+        {
+            SuccessMessage = TempData["SuccessMessage"]!.ToString()!;
+        }
+    }
+
     public async Task<IActionResult> OnPostAsync()
     {
         try
@@ -32,18 +43,15 @@ public class LoginModel : PageModel
             {
                 HttpContext.Session.SetString("UserId", session.User.Id);
                 HttpContext.Session.SetString("Email", session.User.Email);
-                
-                // Nếu sau này có role
-                // HttpContext.Session.SetString("Role", "Admin");
 
                 return RedirectToPage("/Dashboard/Dashboard");
             }
 
             ErrorMessage = "Email hoặc mật khẩu không đúng.";
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            ErrorMessage = ex.Message;
+            ErrorMessage = "Email hoặc mật khẩu không đúng.";
         }
 
         return Page();

@@ -88,7 +88,7 @@ body {
 
 .content {
     flex: 1;
-    padding: 30px;
+    padding: 3px;
     overflow-y: auto;
 }
 

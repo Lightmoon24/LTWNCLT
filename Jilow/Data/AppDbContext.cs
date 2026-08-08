@@ -1,29 +1,14 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using Jilow.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace Jilow.Models;
+namespace Jilow.Data;
 
-[Table("profiles")]
-public class Profile
+public class AppDbContext : DbContext
 {
-    [Key]
-    public Guid Id { get; set; }
+    public AppDbContext(DbContextOptions<AppDbContext> options)
+        : base(options)
+    {
+    }
 
-    public string? Username { get; set; }
-
-    public string? FullName { get; set; }
-
-    public string? AvatarUrl { get; set; }
-
-    public string? Gender { get; set; }
-
-    public string? Country { get; set; }
-
-    public string? Language { get; set; }
-
-    public string? Timezone { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
-    public DateTime UpdatedAt { get; set; }
+    public DbSet<Profile> Profiles => Set<Profile>();
 }

@@ -206,5 +206,7 @@ C:\Users\Admin\Desktop\LTWNCLT\Jilow\obj\Debug\net10.0\compressed\9q4nlakql3-{0}
 C:\Users\Admin\Desktop\LTWNCLT\Jilow\obj\Debug\net10.0\compressed\2w4qp6lh36-{0}-9vr69e8ynj-9vr69e8ynj.gz
 C:\Users\Admin\Desktop\LTWNCLT\Jilow\obj\Debug\net10.0\compressed\kp0hpaiqhi-{0}-cfoetly8hd-cfoetly8hd.gz
 C:\Users\Admin\Desktop\LTWNCLT\Jilow\obj\Debug\net10.0\compressed\0vo304wxlf-{0}-lkla6qhjhf-lkla6qhjhf.gz
-C:\Users\Admin\Desktop\LTWNCLT\Jilow\obj\Debug\net10.0\compressed\8tbhho1zox-{0}-evh9h8vb1m-evh9h8vb1m.gz
-C:\Users\Admin\Desktop\LTWNCLT\Jilow\obj\Debug\net10.0\compressed\meqq1in1fm-{0}-5ipweew5fc-5ipweew5fc.gz
+C:\Users\Admin\Desktop\LTWNCLT\Jilow\obj\Debug\net10.0\compressed\8tbhho1zox-{0}-6edf9fp3ng-6edf9fp3ng.gz
+C:\Users\Admin\Desktop\LTWNCLT\Jilow\obj\Debug\net10.0\compressed\rx4h17na7m-{0}-9ul0ki9edf-9ul0ki9edf.gz
+C:\Users\Admin\Desktop\LTWNCLT\Jilow\obj\Debug\net10.0\compressed\kwohoniow3-{0}-a5j08mm64w-a5j08mm64w.gz
+C:\Users\Admin\Desktop\LTWNCLT\Jilow\obj\Debug\net10.0\compressed\meqq1in1fm-{0}-zxrsceiqt8-zxrsceiqt8.gz

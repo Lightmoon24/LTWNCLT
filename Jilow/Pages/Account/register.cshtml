@@ -6,53 +6,65 @@
     ViewData["Title"] = "Register";
 }
 
-<div class="Login-Body">
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/Register.css"
+          asp-append-version="true" />
+}
 
-    <div class="Login-main-container">
+<div class="Register-Body">
 
-        <div class="Login-Header">
-            <h2 class="Login-Header-logo">Jilow</h2>
-            <p class="Login-Header-title">
+    <div class="Register-main-container">
+
+        <div class="Register-Header">
+            <h2 class="Register-Header-logo">
+                Jilow
+            </h2>
+
+            <p class="Register-Header-title">
                 Đăng ký tài khoản
             </p>
         </div>
 
         <form method="post">
 
-            <div class="Login-Form">
+            <div class="Register-Form">
 
-                <label class="Login-Form-label">
+                <label class="Register-Form-label">
                     Email
                 </label>
 
                 <input asp-for="Email"
                        type="email"
-                       class="Login-Form-input"
+                       class="Register-Form-input"
                        placeholder="Nhập email của bạn" />
 
-                <label class="Login-Form-label">
+                <label class="Register-Form-label">
                     Password
                 </label>
 
                 <input asp-for="Password"
                        type="password"
-                       class="Login-Form-input"
+                       class="Register-Form-input"
                        placeholder="Nhập mật khẩu của bạn" />
 
-                <label class="Login-Form-label">
+                <label class="Register-Form-label">
                     Confirm Password
                 </label>
 
                 <input asp-for="ConfirmPassword"
                        type="password"
-                       class="Login-Form-input"
+                       class="Register-Form-input"
                        placeholder="Nhập lại mật khẩu của bạn" />
 
-                <span style="color:red">
-                    @Model.ErrorMessage
-                </span>
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <span class="Register-ErrorMessage">
+                        @Model.ErrorMessage
+                    </span>
+                }
 
-                <div class="Login-login-btn">
+                <div class="Register-register-btn">
                     <button type="submit">
                         Đăng Ký
                     </button>
@@ -62,7 +74,7 @@
 
         </form>
 
-        <div class="Login-ForgetPassword-text">
+        <div class="Register-Footer-text">
             <a asp-page="/Account/Login">
                 Bạn đã có tài khoản? Đăng nhập ngay
             </a>

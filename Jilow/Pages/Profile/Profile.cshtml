@@ -1,120 +1,313 @@
 @page
+@using Microsoft.AspNetCore.Http
 @model Jilow.Pages.Profile.Profile
 
 @{
     ViewData["Title"] = "Profile";
+
+    var isEdit = Request.Query["edit"] == "true";
+
+    var avatarUrl = string.IsNullOrEmpty(Model.UserProfile?.AvatarUrl)
+        ? Url.Content("~/images/Avatar.png")
+        : Model.UserProfile.AvatarUrl;
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/Profile.css" asp-append-version="true" />
 }
 
-<link rel="stylesheet"
-      href="~/css/Profile.css"
-      asp-append-version="true" />
 
-<div class="profile-container">
+<form method="post"
+      enctype="multipart/form-data">
 
     <!-- Banner -->
     <div class="profile-banner"></div>
 
+
     <!-- Header -->
     <div class="profile-header">
 
-    <div class="profile-header-user">
+        <div class="profile-header-user">
 
-        <div class="profile-header-avatar">
-            <img src="~/images/Avatar.png" alt="Avatar">
+            <!-- Avatar -->
+            <div class="profile-header-avatar">
+
+                <label for="avatarFile"
+                       class="profile-avatar-upload">
+
+                    <img id="avatarPreview"
+                         src="@avatarUrl"
+                         alt="Avatar" />
+
+                    @if (isEdit)
+                    {
+                        <div class="profile-avatar-overlay">
+                            <span>Đổi ảnh</span>
+                        </div>
+                    }
+
+                </label>
+
+                @if (isEdit)
+                {
+                    <input asp-for="AvatarFile"
+                           id="avatarFile"
+                           type="file"
+                           accept="image/*"
+                           class="profile-avatar-input" />
+                }
+
+            </div>
+
+
+            <div class="profile-header-info">
+
+                <h2>
+                    @(Model.UserProfile?.FullName ?? "User")
+                </h2>
+
+                <p>
+                    @HttpContext.Session.GetString("Email")
+                </p>
+
+            </div>
+
         </div>
 
-        <div class="profile-header-info">
-            <h2>Alexa Rawles</h2>
-            <p>@HttpContext.Session.GetString("Email")</p>
+
+        <!-- Actions -->
+        <div class="profile-header-action">
+
+            @if (!isEdit)
+            {
+                <button type="button"
+                        class="profile-header-button"
+                        onclick="location.href='?edit=true'">
+                    Edit
+                </button>
+            }
+            else
+            {
+                <button type="submit"
+                        class="profile-header-button">
+                    Save
+                </button>
+
+                <button type="button"
+                        class="profile-header-button"
+                        onclick="location.href='Profile'">
+                    Cancel
+                </button>
+            }
+
         </div>
-    </div>
-
-    <div class="profile-header-action">
-
-        <button class="profile-header-button">
-            Edit
-        </button>
-
-        <form method="post" asp-page-handler="Logout">
-            <button type="submit" class="profile-header-logout">
-                Logout
-            </button>
-        </form>
 
     </div>
 
-</div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="profile-message profile-message-error">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="profile-message profile-message-success">
+            @Model.SuccessMessage
+        </div>
+    }
+
 
     <!-- Form -->
     <div class="profile-form">
 
         <div class="profile-form-group">
-            <label>Full Name</label>
-            <input class="profile-form-input"
-                   type="text"
-                   placeholder="Your First Name">
+
+            <label>
+                Full Name
+            </label>
+
+            <input asp-for="UserProfile.FullName"
+                   class="profile-form-input"
+                   readonly="@(!isEdit)" />
+
         </div>
 
-        <div class="profile-form-group">
-            <label>Nick Name</label>
-            <input class="profile-form-input"
-                   type="text"
-                   placeholder="Your Nick Name">
-        </div>
 
         <div class="profile-form-group">
-            <label>Gender</label>
-            <select class="profile-form-select">
-                <option>Male</option>
-                <option>Female</option>
+
+            <label>
+                Nick Name
+            </label>
+
+            <input asp-for="UserProfile.Username"
+                   class="profile-form-input"
+                   readonly="@(!isEdit)" />
+
+        </div>
+
+
+        <div class="profile-form-group">
+
+            <label>
+                Gender
+            </label>
+
+            <select asp-for="UserProfile.Gender"
+                    class="profile-form-select"
+                    disabled="@(!isEdit)">
+
+                <option value="Male">
+                    Male
+                </option>
+
+                <option value="Female">
+                    Female
+                </option>
+
+                <option value="Other">
+                    Other
+                </option>
+
             </select>
+
+            @if (!isEdit)
+            {
+                <input type="hidden"
+                       asp-for="UserProfile.Gender" />
+            }
+
         </div>
 
-        <div class="profile-form-group">
-            <label>Country</label>
-            <select class="profile-form-select">
-                <option>Vietnam</option>
-            </select>
-        </div>
 
         <div class="profile-form-group">
-            <label>Language</label>
-            <select class="profile-form-select">
-                <option>English</option>
-            </select>
+
+            <label>
+                Country
+            </label>
+
+            <input asp-for="UserProfile.Country"
+                   class="profile-form-input"
+                   readonly="@(!isEdit)" />
+
         </div>
 
+
         <div class="profile-form-group">
-            <label>Time Zone</label>
-            <select class="profile-form-select">
-                <option>GMT +7</option>
+
+            <label>
+                Language
+            </label>
+
+            <select asp-for="UserProfile.Language"
+                    class="profile-form-select"
+                    disabled="@(!isEdit)">
+
+                <option value="Tiếng Việt">
+                    Tiếng Việt
+                </option>
+
+                <option value="English">
+                    English
+                </option>
+
             </select>
+
+            @if (!isEdit)
+            {
+                <input type="hidden"
+                       asp-for="UserProfile.Language" />
+            }
+
+        </div>
+
+
+        <div class="profile-form-group">
+
+            <label>
+                Time Zone
+            </label>
+
+            <input asp-for="UserProfile.Timezone"
+                   class="profile-form-input"
+                   readonly="@(!isEdit)" />
+
         </div>
 
     </div>
 
-    <!-- Email -->
-    <div class="profile-email">
+</form>
 
-        <h3>My Email Address</h3>
 
-        <div class="profile-email-item">
+<!-- Email -->
+<div class="profile-email">
 
-            <div class="profile-email-icon">
-                ✉
-            </div>
+    <h3>
+        My Email Address
+    </h3>
 
-            <div class="profile-email-info">
-                <strong>@HttpContext.Session.GetString("Email")</strong>
-                <p>1 month ago</p>
-            </div>
+    <div class="profile-email-item">
+
+        <div class="profile-email-icon">
+            ✉
+        </div>
+
+        <div class="profile-email-info">
+
+            <strong>
+                @HttpContext.Session.GetString("Email")
+            </strong>
+
+            <p>
+                Verified account
+            </p>
 
         </div>
 
-        <button class="profile-email-button">
-            + Add Email Address
-        </button>
-
     </div>
+
+    <button type="button"
+            class="profile-email-button">
+        + Add Email Address
+    </button>
 
 </div>
+
+
+<!-- Logout -->
+<form method="post"
+      asp-page-handler="Logout">
+
+    <button type="submit"
+            class="profile-header-logout">
+        Logout
+    </button>
+
+</form>
+
+
+<script>
+    const avatarInput = document.getElementById("avatarFile");
+    const avatarPreview = document.getElementById("avatarPreview");
+
+    if (avatarInput) {
+        avatarInput.addEventListener("change", function () {
+
+            const file = this.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            // Hiển thị preview ngay lập tức
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+                avatarPreview.src = event.target.result;
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
+</script>

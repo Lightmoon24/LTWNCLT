@@ -6,15 +6,32 @@
     ViewData["Title"] = "Login";
 }
 
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/Login.css"
+          asp-append-version="true" />
+}
+
 <div class="Login-Body">
+
     <div class="Login-main-container">
 
         <div class="Login-Header">
-            <h2 class="Login-Header-logo">Jilow</h2>
+            <h2 class="Login-Header-logo">
+                Jilow
+            </h2>
+
             <p class="Login-Header-title">
                 Đăng nhập để tiếp tục
             </p>
         </div>
+
+        @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+        {
+            <div class="Login-SuccessMessage">
+                @Model.SuccessMessage
+            </div>
+        }
 
         <form method="post">
 
@@ -38,9 +55,12 @@
                        class="Login-Form-input"
                        placeholder="Nhập mật khẩu của bạn" />
 
-                <span style="color:red">
-                    @Model.ErrorMessage
-                </span>
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <span class="Login-ErrorMessage">
+                        @Model.ErrorMessage
+                    </span>
+                }
 
                 <div class="Login-login-btn">
                     <button type="submit">
@@ -53,10 +73,17 @@
         </form>
 
         <div class="Login-ForgetPassword-text">
-            <a asp-page="/Account/Login">Bạn không đăng nhập được?</a>
+            <a asp-page="/Account/Login">
+                Bạn không đăng nhập được?
+            </a>
+
             •
-            <a asp-page="/Account/Register">Tạo tài khoản</a>
+
+            <a asp-page="/Account/Register">
+                Tạo tài khoản
+            </a>
         </div>
 
     </div>
+
 </div>
