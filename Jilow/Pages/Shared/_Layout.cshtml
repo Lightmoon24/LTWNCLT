@@ -15,7 +15,7 @@
 
     @RenderSection("Styles", required: false)
 </head>
-
+@await RenderSectionAsync("Scripts", required: false)
 <body>
     <header class="topbar">
         <div class="logo">
@@ -45,7 +45,7 @@
             <i class="fa-solid fa-diagram-project"></i>
             <span>Projects</span>
         </a>
-        <a asp-page="/Board">
+        <a asp-page="/Board/Board">
             <i class="fa-solid fa-list-check"></i>
             <span>Board</span>
         </a>

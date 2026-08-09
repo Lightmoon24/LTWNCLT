@@ -1,0 +1,655 @@
+@page
+@model Jilow.Pages.Board.IndexModel
+
+@{
+    ViewData["Title"] = "Board";
+}
+
+@section Styles
+{
+    <link rel="stylesheet"
+          href="~/css/board.css"
+          asp-append-version="true" />
+}
+
+
+<div class="board-page">
+
+    <!-- =====================================================
+         BOARD HEADER
+         ===================================================== -->
+
+    <div class="board-header">
+
+        <div class="board-header-left">
+
+            <div class="board-title">
+
+                <i class="fa-solid fa-list-check"></i>
+
+                <div>
+                    <h1>
+                        @(Model.CurrentBoard?.Name ?? "My Board")
+                    </h1>
+
+                    <span>
+                        Quản lý công việc
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="board-header-right">
+
+            <button type="button"
+                    id="openCreateTask"
+                    class="btn-create-task">
+
+                <i class="fa-solid fa-plus"></i>
+
+                Tạo công việc
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         BOARD
+         ===================================================== -->
+
+    <div class="board-container">
+
+        @if (Model.Columns.Count == 0)
+        {
+            <div class="empty-board">
+
+                <i class="fa-solid fa-inbox"></i>
+
+                <h3>
+                    Chưa có column
+                </h3>
+
+                <p>
+                    Board chưa có column để quản lý công việc.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            <div class="board-columns">
+
+                @foreach (var column in Model.Columns)
+                {
+                    <div class="board-column"
+                         data-column-id="@column.Id">
+
+
+                        <!-- =================================
+                             COLUMN HEADER
+                             ================================= -->
+
+                        <div class="column-header">
+
+                            <div class="column-title">
+
+                                <span class="column-dot @column.ColorClass"></span>
+
+                                <span>
+                                    @column.Name
+                                </span>
+
+                                <span class="task-count">
+                                    @column.Tickets.Count
+                                </span>
+
+                            </div>
+
+
+                            <button type="button"
+                                    class="column-menu"
+                                    title="Tùy chọn">
+
+                                <i class="fa-solid fa-ellipsis"></i>
+
+                            </button>
+
+                        </div>
+
+
+                        <!-- =================================
+                             TASK LIST
+                             ================================= -->
+
+                        <div class="task-list">
+
+                            @if (column.Tickets.Count == 0)
+                            {
+                                <div class="empty-column">
+
+                                    <i class="fa-regular fa-folder-open"></i>
+
+                                    <span>
+                                        Chưa có công việc
+                                    </span>
+
+                                </div>
+                            }
+                            else
+                            {
+                                @foreach (var ticket in column.Tickets)
+                                {
+                                    var priorityClass =
+                                        ticket.Priority?.ToLowerInvariant() switch
+                                        {
+                                            "high" =>
+                                                "priority-high",
+
+                                            "cao" =>
+                                                "priority-high",
+
+                                            "medium" =>
+                                                "priority-medium",
+
+                                            "trung bình" =>
+                                                "priority-medium",
+
+                                            "low" =>
+                                                "priority-low",
+
+                                            "thấp" =>
+                                                "priority-low",
+
+                                            _ =>
+                                                "priority-medium"
+                                        };
+
+
+                                    <div class="task-card"
+                                         data-task-id="@ticket.Id"
+                                         tabindex="0"
+                                         role="button">
+
+
+                                        <!-- ==========================
+                                             TICKET KEY
+                                             ========================== -->
+
+                                        <div class="task-card-top">
+
+                                            <span class="task-key">
+                                                @ticket.Key
+                                            </span>
+
+                                        </div>
+
+
+                                        <!-- ==========================
+                                             TITLE
+                                             ========================== -->
+
+                                        <div class="task-card-title">
+
+                                            @ticket.Title
+
+                                        </div>
+
+
+                                        <!-- ==========================
+                                             DESCRIPTION
+                                             ========================== -->
+
+                                        @if (!string.IsNullOrWhiteSpace(
+                                            ticket.Description))
+                                        {
+                                            <div class="task-card-description">
+
+                                                @ticket.Description
+
+                                            </div>
+                                        }
+
+
+                                        <!-- ==========================
+                                             DATE
+                                             ========================== -->
+
+                                        @if (
+                                            ticket.StartDate.HasValue ||
+                                            ticket.EndDate.HasValue)
+                                        {
+                                            <div class="task-card-date">
+
+                                                <i class="fa-regular fa-calendar"></i>
+
+                                                @if (ticket.StartDate.HasValue)
+                                                {
+                                                    <span>
+                                                        @ticket.StartDate.Value.ToString("dd/MM/yyyy")
+                                                    </span>
+                                                }
+
+                                                @if (
+                                                    ticket.StartDate.HasValue &&
+                                                    ticket.EndDate.HasValue)
+                                                {
+                                                    <span>
+                                                        -
+                                                    </span>
+                                                }
+
+                                                @if (ticket.EndDate.HasValue)
+                                                {
+                                                    <span>
+                                                        @ticket.EndDate.Value.ToString("dd/MM/yyyy")
+                                                    </span>
+                                                }
+
+                                            </div>
+                                        }
+
+
+                                        <!-- ==========================
+                                             BOTTOM
+                                             ========================== -->
+
+                                        <div class="task-card-bottom">
+
+
+                                            <!-- PRIORITY -->
+
+                                            <span class="task-priority @priorityClass">
+
+                                                @ticket.Priority
+
+                                            </span>
+
+
+                                            <!-- ASSIGNEE -->
+
+                                            <div class="task-assignee">
+
+                                                <span class="assignee-avatar">
+                                                    B
+                                                </span>
+
+                                                <span class="assignee-name">
+                                                    Bạn
+                                                </span>
+
+                                            </div>
+
+
+                                            <!-- COMMENT -->
+
+                                            <div class="task-comments">
+
+                                                <i class="fa-regular fa-comment"></i>
+
+                                                <span>
+                                                    0
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                }
+                            }
+
+
+                            <!-- =================================
+                                 ADD TASK
+                                 ================================= -->
+
+                            <button type="button"
+                                    class="add-task-inline"
+                                    data-column-id="@column.Id">
+
+                                <i class="fa-solid fa-plus"></i>
+
+                                Thêm công việc
+
+                            </button>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     TASK DETAIL MODAL
+     ========================================================= -->
+
+<div id="taskModal"
+     class="task-modal"
+     aria-hidden="true">
+
+    <div class="task-modal-content">
+
+
+        <div class="task-modal-header">
+
+            <div>
+
+                <span id="detailTaskKey"
+                      class="detail-task-key">
+                </span>
+
+                <h2 id="taskModalTitle">
+                    Chi tiết công việc
+                </h2>
+
+            </div>
+
+
+            <button type="button"
+                    id="closeTaskModal"
+                    class="modal-close">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+
+        <div class="task-modal-body">
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="detail-section">
+
+                <label>
+                    Mô tả
+                </label>
+
+                <p id="detailDescription">
+                    Chưa có mô tả.
+                </p>
+
+            </div>
+
+
+            <!-- DATES -->
+
+            <div class="detail-grid">
+
+                <div class="detail-item">
+
+                    <label>
+                        Ngày bắt đầu
+                    </label>
+
+                    <span id="detailStartDate">
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <label>
+                        Ngày hoàn thành
+                    </label>
+
+                    <span id="detailEndDate">
+                        -
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- PRIORITY -->
+
+            <div class="detail-grid">
+
+                <div class="detail-item">
+
+                    <label>
+                        Độ ưu tiên
+                    </label>
+
+                    <span id="detailPriority">
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <label>
+                        Người thực hiện
+                    </label>
+
+                    <span id="detailAssignee">
+                        Bạn
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="detail-section">
+
+                <label>
+                    Trạng thái
+                </label>
+
+                <span id="detailStatus">
+                    -
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     CREATE TASK MODAL
+     ========================================================= -->
+
+<div id="createTaskModal"
+     class="task-modal"
+     aria-hidden="true">
+
+    <div class="task-modal-content create-task-modal-content">
+
+
+        <!-- HEADER -->
+
+        <div class="task-modal-header">
+
+            <div>
+
+                <span class="detail-task-key">
+                    NEW TASK
+                </span>
+
+                <h2>
+                    Tạo công việc
+                </h2>
+
+            </div>
+
+
+            <button type="button"
+                    id="closeCreateModal"
+                    class="modal-close">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+
+        <!-- FORM -->
+
+<form id="createTaskForm" method="post">
+
+    @Html.AntiForgeryToken()
+
+    <div class="task-modal-body">
+
+
+                <!-- TITLE -->
+
+                <div class="form-group">
+
+                    <label for="taskName">
+                        Tên công việc
+                    </label>
+
+                    <input type="text"
+                           id="taskName"
+                           class="form-control"
+                           placeholder="Nhập tên công việc..."
+                           required />
+
+                </div>
+
+
+                <!-- DATE -->
+
+                <div class="detail-grid">
+
+
+                    <div class="form-group">
+
+                        <label for="taskStart">
+                            Ngày bắt đầu
+                        </label>
+
+                        <input type="date"
+                               id="taskStart"
+                               class="form-control" />
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="taskEnd">
+                            Ngày hoàn thành
+                        </label>
+
+                        <input type="date"
+                               id="taskEnd"
+                               class="form-control" />
+
+                    </div>
+
+                </div>
+
+
+                <!-- PRIORITY -->
+
+                <div class="form-group">
+
+                    <label for="taskPriority">
+                        Độ ưu tiên
+                    </label>
+
+                    <select id="taskPriority"
+                            class="form-control">
+
+                        <option value="Low">
+                            Thấp
+                        </option>
+
+                        <option value="Medium"
+                                selected>
+                            Trung bình
+                        </option>
+
+                        <option value="High">
+                            Cao
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="form-group">
+
+                    <label for="taskDescription">
+                        Mô tả
+                    </label>
+
+                    <textarea id="taskDescription"
+                              class="form-control"
+                              rows="5"
+                              placeholder="Mô tả công việc..."></textarea>
+
+                </div>
+
+
+                <!-- BUTTONS -->
+
+                <div class="form-actions">
+
+                    <button type="button"
+                            id="cancelCreateTask"
+                            class="btn-secondary">
+
+                        Hủy
+
+                    </button>
+
+
+                    <button type="submit"
+                            class="btn-primary">
+
+                        <i class="fa-solid fa-plus"></i>
+
+                        Tạo công việc
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <script src="~/js/Board.js"
+            asp-append-version="true"></script>
+}
