@@ -10,14 +10,26 @@ namespace Jilow.Pages.Profile;
 public class Profile : PageModel
 {
     private readonly ILogger<Profile> _logger;
-
-    // Ghi rõ namespace để tránh Client bị ambiguous
     private readonly Supabase.Client _supabase;
-
     private readonly AppDbContext _context;
 
-    // Tên bucket trong Supabase Storage
+    /*
+     * QUAN TRỌNG:
+     *
+     * Tên này PHẢI giống 100% tên bucket trong
+     * Supabase Dashboard -> Storage.
+     *
+     * Ví dụ nếu bucket của bạn tên:
+     * Avatar_img
+     *
+     * thì giữ nguyên.
+     */
     private const string AvatarBucket = "Avatar_img";
+
+
+    // ===========================
+    // CONSTRUCTOR
+    // ===========================
 
     public Profile(
         ILogger<Profile> logger,
@@ -63,7 +75,7 @@ public class Profile : PageModel
     {
         var userId = HttpContext.Session.GetString("UserId");
 
-        if (string.IsNullOrEmpty(userId))
+        if (string.IsNullOrWhiteSpace(userId))
         {
             return RedirectToPage("/Account/Login");
         }
@@ -73,13 +85,17 @@ public class Profile : PageModel
             return RedirectToPage("/Account/Login");
         }
 
+
         UserProfile = await _context.Profiles
+            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == profileId);
+
 
         if (UserProfile == null)
         {
             return NotFound();
         }
+
 
         return Page();
     }
@@ -93,7 +109,7 @@ public class Profile : PageModel
     {
         var userId = HttpContext.Session.GetString("UserId");
 
-        if (string.IsNullOrEmpty(userId))
+        if (string.IsNullOrWhiteSpace(userId))
         {
             return RedirectToPage("/Account/Login");
         }
@@ -103,8 +119,14 @@ public class Profile : PageModel
             return RedirectToPage("/Account/Login");
         }
 
+
+        // ===========================
+        // GET PROFILE FROM DATABASE
+        // ===========================
+
         var profile = await _context.Profiles
             .FirstOrDefaultAsync(x => x.Id == profileId);
+
 
         if (profile == null)
         {
@@ -116,12 +138,15 @@ public class Profile : PageModel
         // UPDATE PROFILE INFORMATION
         // ===========================
 
-        profile.FullName = UserProfile.FullName;
-        profile.Username = UserProfile.Username;
-        profile.Gender = UserProfile.Gender;
-        profile.Country = UserProfile.Country;
-        profile.Language = UserProfile.Language;
-        profile.Timezone = UserProfile.Timezone;
+        if (UserProfile != null)
+        {
+            profile.FullName = UserProfile.FullName;
+            profile.Username = UserProfile.Username;
+            profile.Gender = UserProfile.Gender;
+            profile.Country = UserProfile.Country;
+            profile.Language = UserProfile.Language;
+            profile.Timezone = UserProfile.Timezone;
+        }
 
 
         // ===========================
@@ -130,6 +155,15 @@ public class Profile : PageModel
 
         if (AvatarFile != null && AvatarFile.Length > 0)
         {
+            var extension = Path
+                .GetExtension(AvatarFile.FileName)
+                .ToLowerInvariant();
+
+
+            // ===========================
+            // CHECK EXTENSION
+            // ===========================
+
             var allowedExtensions = new[]
             {
                 ".jpg",
@@ -139,12 +173,7 @@ public class Profile : PageModel
                 ".webp"
             };
 
-            var extension = Path
-                .GetExtension(AvatarFile.FileName)
-                .ToLowerInvariant();
 
-
-            // Kiểm tra định dạng
             if (!allowedExtensions.Contains(extension))
             {
                 ErrorMessage =
@@ -156,8 +185,12 @@ public class Profile : PageModel
             }
 
 
-            // Giới hạn 5MB
+            // ===========================
+            // CHECK FILE SIZE
+            // ===========================
+
             const long maxFileSize = 5 * 1024 * 1024;
+
 
             if (AvatarFile.Length > maxFileSize)
             {
@@ -173,8 +206,16 @@ public class Profile : PageModel
             try
             {
                 // ===========================
-                // STORAGE PATH
+                // FILE PATH
                 // ===========================
+
+                /*
+                 * Ví dụ:
+                 *
+                 * 550e8400-e29b-41d4-a716-446655440000/avatar.png
+                 *
+                 * Mỗi user có một folder riêng.
+                 */
 
                 var avatarPath =
                     $"{profile.Id}/avatar{extension}";
@@ -187,14 +228,16 @@ public class Profile : PageModel
                 await using var memoryStream =
                     new MemoryStream();
 
+
                 await AvatarFile.CopyToAsync(memoryStream);
+
 
                 var fileBytes =
                     memoryStream.ToArray();
 
 
                 // ===========================
-                // UPLOAD TO SUPABASE
+                // UPLOAD TO SUPABASE STORAGE
                 // ===========================
 
                 await _supabase.Storage
@@ -214,16 +257,35 @@ public class Profile : PageModel
                 // GET PUBLIC URL
                 // ===========================
 
+                /*
+                 * URL được lấy SAU KHI upload thành công.
+                 */
+
                 var avatarUrl = _supabase.Storage
                     .From(AvatarBucket)
                     .GetPublicUrl(avatarPath);
 
 
+                if (string.IsNullOrWhiteSpace(avatarUrl))
+                {
+                    throw new Exception(
+                        "Supabase không trả về URL của avatar."
+                    );
+                }
+
+
                 // ===========================
-                // SAVE URL
+                // SAVE URL TO DATABASE
                 // ===========================
 
                 profile.AvatarUrl = avatarUrl;
+
+
+                _logger.LogInformation(
+                    "Avatar uploaded successfully. UserId: {UserId}, Url: {AvatarUrl}",
+                    profile.Id,
+                    avatarUrl
+                );
             }
             catch (Exception ex)
             {
@@ -233,8 +295,25 @@ public class Profile : PageModel
                     profile.Id
                 );
 
-                ErrorMessage =
-                    "Không thể tải ảnh đại diện lên. Vui lòng thử lại.";
+
+                /*
+                 * Hiển thị lỗi thực tế trong Development
+                 * để dễ debug Supabase.
+                 */
+
+                if (HttpContext.RequestServices
+                    .GetRequiredService<IWebHostEnvironment>()
+                    .IsDevelopment())
+                {
+                    ErrorMessage =
+                        $"Upload avatar thất bại: {ex.Message}";
+                }
+                else
+                {
+                    ErrorMessage =
+                        "Không thể tải ảnh đại diện lên. Vui lòng thử lại.";
+                }
+
 
                 UserProfile = profile;
 
@@ -244,16 +323,26 @@ public class Profile : PageModel
 
 
         // ===========================
-        // SAVE DATABASE
+        // UPDATE TIME
         // ===========================
 
         profile.UpdatedAt = DateTime.UtcNow;
 
+
+        // ===========================
+        // SAVE DATABASE
+        // ===========================
+
         await _context.SaveChangesAsync();
 
 
-        SuccessMessage =
+        // ===========================
+        // SUCCESS
+        // ===========================
+
+        TempData["SuccessMessage"] =
             "Cập nhật thông tin thành công.";
+
 
         return RedirectToPage();
     }
@@ -265,9 +354,21 @@ public class Profile : PageModel
 
     public async Task<IActionResult> OnPostLogoutAsync()
     {
-        await _supabase.Auth.SignOut();
+        try
+        {
+            await _supabase.Auth.SignOut();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "Supabase logout failed."
+            );
+        }
+
 
         HttpContext.Session.Clear();
+
 
         return RedirectToPage("/Index");
     }
