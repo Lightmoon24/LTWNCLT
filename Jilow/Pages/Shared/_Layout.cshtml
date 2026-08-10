@@ -23,11 +23,8 @@
         </div>
         <input class="search" type="text" placeholder="Search..." />
         <div class="top-right">
-            <button class="btn btn-primary">
-                + Create
-            </button>
             <button class="icon-btn">
-                🔔
+                <i class="fa-solid fa-bell"></i>
             </button>
             <a href="../Profile/Profile">
                 <img src="~/images/Avatar.png" class="avatar" />
@@ -37,19 +34,11 @@
     </header>
 <div class="app">
     <aside class="sidebar">
-        <a asp-page="/Dashboard/Dashboard">
-            <i class="fa-solid fa-table-columns"></i>
-            <span>Dashboard</span>
-        </a>
-        <a asp-page="/Projects">
-            <i class="fa-solid fa-diagram-project"></i>
-            <span>Projects</span>
-        </a>
         <a asp-page="/Board/Board">
             <i class="fa-solid fa-list-check"></i>
             <span>Board</span>
         </a>
-        <a asp-page="/Inbox">
+        <a asp-page="/Inbox/Inbox">
             <i class="fa-solid fa-inbox"></i>
             <span>Inbox</span>
         </a>
@@ -60,6 +49,10 @@
         <a asp-page="/Settings">
             <i class="fa-solid fa-gear"></i>
             <span>Settings</span>
+        </a>
+        <a asp-page="/Setting">
+            <i class="fa-brands fa-yelp"></i>
+            <span>Giới Thiệu</span>
         </a>
     </aside>
     <main class="content">

@@ -44,7 +44,7 @@ public class LoginModel : PageModel
                 HttpContext.Session.SetString("UserId", session.User.Id);
                 HttpContext.Session.SetString("Email", session.User.Email);
 
-                return RedirectToPage("/Dashboard/Dashboard");
+                return RedirectToPage("/Board/Board");
             }
 
             ErrorMessage = "Email hoặc mật khẩu không đúng.";

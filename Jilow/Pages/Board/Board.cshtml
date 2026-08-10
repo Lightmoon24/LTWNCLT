@@ -340,8 +340,7 @@
      class="task-modal"
      aria-hidden="true">
 
-    <div class="task-modal-content">
-
+    <div class="task-modal-panel">
 
         <div class="task-modal-header">
 
@@ -357,7 +356,6 @@
 
             </div>
 
-
             <button type="button"
                     id="closeTaskModal"
                     class="modal-close">
@@ -368,11 +366,7 @@
 
         </div>
 
-
         <div class="task-modal-body">
-
-
-            <!-- DESCRIPTION -->
 
             <div class="detail-section">
 
@@ -385,9 +379,6 @@
                 </p>
 
             </div>
-
-
-            <!-- DATES -->
 
             <div class="detail-grid">
 
@@ -403,7 +394,6 @@
 
                 </div>
 
-
                 <div class="detail-item">
 
                     <label>
@@ -417,9 +407,6 @@
                 </div>
 
             </div>
-
-
-            <!-- PRIORITY -->
 
             <div class="detail-grid">
 
@@ -435,7 +422,6 @@
 
                 </div>
 
-
                 <div class="detail-item">
 
                     <label>
@@ -449,9 +435,6 @@
                 </div>
 
             </div>
-
-
-            <!-- STATUS -->
 
             <div class="detail-section">
 
@@ -467,6 +450,32 @@
 
         </div>
 
+        <div class="task-modal-footer">
+
+            <div class="task-modal-actions">
+
+                <button type="button"
+                        id="nextTaskBtn"
+                        class="btn-next">
+
+                    <i class="fa-solid fa-arrow-right"></i>
+                    Tiếp theo
+
+                </button>
+
+                <button type="button"
+                        id="deleteTaskBtn"
+                        class="btn-delete">
+
+                    <i class="fa-solid fa-trash"></i>
+                    Xóa công việc
+
+                </button>
+
+            </div>
+
+        </div>
+
     </div>
 
 </div>
@@ -477,13 +486,10 @@
      ========================================================= -->
 
 <div id="createTaskModal"
-     class="task-modal"
+     class="task-modal create-task-modal"
      aria-hidden="true">
 
-    <div class="task-modal-content create-task-modal-content">
-
-
-        <!-- HEADER -->
+    <div class="task-modal-panel create-task-panel">
 
         <div class="task-modal-header">
 
@@ -499,7 +505,6 @@
 
             </div>
 
-
             <button type="button"
                     id="closeCreateModal"
                     class="modal-close">
@@ -510,10 +515,7 @@
 
         </div>
 
-
-        <!-- FORM -->
-
-<form id="createTaskForm" method="post">
+        <form id="createTaskForm" method="post">
 
     @Html.AntiForgeryToken()
 

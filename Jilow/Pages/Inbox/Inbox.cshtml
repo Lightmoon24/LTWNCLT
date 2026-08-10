@@ -1,0 +1,210 @@
+@page
+@model Jilow.Pages.Inbox.InboxModel
+
+@section Styles
+{
+    <link rel="stylesheet"
+          href="~/css/inbox.css"
+          asp-append-version="true" />
+}
+@{
+    ViewData["Title"] = "Inbox";
+}
+
+<div class="inbox-container">
+    <div class="inbox-header">
+        <div>
+            <p class="eyebrow">Messaging</p>
+            <h1>Inbox</h1>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+    {
+        <div class="alert success">@Model.SuccessMessage</div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <div class="alert error">@Model.ErrorMessage</div>
+    }
+
+    <form method="post" class="message-form">
+        @Html.AntiForgeryToken()
+
+        <div class="form-grid">
+            <div class="field">
+                <label asp-for="Input.Title">Tiêu đề</label>
+                <input asp-for="Input.Title" placeholder="Nhập tiêu đề..." />
+            </div>
+
+            <div class="field">
+                <label asp-for="Input.SenderEmail">Email người gửi</label>
+                <input asp-for="Input.SenderEmail" type="email" placeholder="nguoigui@example.com" />
+            </div>
+
+            <div class="field">
+                <label asp-for="Input.RecipientEmail">Email người muốn gửi</label>
+                <input asp-for="Input.RecipientEmail" type="email" placeholder="nguoinhan@example.com" />
+            </div>
+
+            <div class="field field-full">
+                <label asp-for="Input.Content">Nội dung</label>
+                <textarea asp-for="Input.Content" rows="6" placeholder="Nhập nội dung tin nhắn..."></textarea>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-btn">
+            <i class="fa-solid fa-paper-plane"></i>
+            Gửi tin nhắn
+        </button>
+    </form>
+
+    <div class="message-panel">
+        <div class="panel-header">
+            <h2>Tin nhắn gần đây</h2>
+            @if (!string.IsNullOrWhiteSpace(Model.ActiveEmail))
+            {
+                <span class="filter-label">Lọc theo: @Model.ActiveEmail</span>
+            }
+        </div>
+
+        @if (Model.Messages.Count == 0)
+        {
+            <div class="empty-state">
+                <i class="fa-regular fa-inbox"></i>
+                <p>Chưa có tin nhắn nào.</p>
+            </div>
+        }
+        else
+        {
+            <div class="message-list">
+                @foreach (var message in Model.Messages)
+                {
+                    <article class="message-card"
+                             data-title="@message.Title"
+                             data-sender="@message.SenderEmail"
+                             data-recipient="@message.RecipientEmail"
+                             data-content="@message.Content"
+                             data-time="@message.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")"
+                             tabindex="0"
+                             role="button"
+                             aria-label="Xem chi tiết tin nhắn @message.Title">
+                        <div class="message-top">
+                            <span class="message-badge">@message.Title</span>
+                            <span class="message-time">@message.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+
+                        <div class="message-meta">
+                            <div><strong>Từ:</strong> @message.SenderEmail</div>
+                            <div><strong>Đến:</strong> @message.RecipientEmail</div>
+                        </div>
+
+                        <p class="message-content">@message.Content</p>
+                    </article>
+                }
+            </div>
+        }
+    </div>
+</div>
+<div id="messageModal" class="message-modal" aria-hidden="true">
+    <div class="message-modal-panel">
+        <div class="message-modal-header">
+            <div>
+                <span class="message-modal-key">Inbox</span>
+                <h2 id="messageModalTitle">Tin nhắn</h2>
+            </div>
+            <button type="button" id="closeMessageModal" class="modal-close" aria-label="Đóng modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="message-modal-body">
+            <div class="message-meta-block">
+                <div class="meta-item">
+                    <label>Tiêu đề</label>
+                    <span id="modalMessageTitle">-</span>
+                </div>
+
+                <div class="meta-item">
+                    <label>Người gửi</label>
+                    <span id="modalMessageSender">-</span>
+                </div>
+
+                <div class="meta-item">
+                    <label>Người nhận</label>
+                    <span id="modalMessageRecipient">-</span>
+                </div>
+
+                <div class="meta-item">
+                    <label>Thời gian</label>
+                    <span id="modalMessageTime">-</span>
+                </div>
+            </div>
+
+            <div class="meta-item">
+                <label>Nội dung</label>
+                <p id="modalMessageContent" class="message-text">-</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('messageModal');
+        const closeBtn = document.getElementById('closeMessageModal');
+        const titleEl = document.getElementById('modalMessageTitle');
+        const senderEl = document.getElementById('modalMessageSender');
+        const recipientEl = document.getElementById('modalMessageRecipient');
+        const timeEl = document.getElementById('modalMessageTime');
+        const contentEl = document.getElementById('modalMessageContent');
+
+        function openMessageModal(card) {
+            if (!card || !modal) return;
+
+            titleEl.textContent = card.dataset.title || '-';
+            senderEl.textContent = card.dataset.sender || '-';
+            recipientEl.textContent = card.dataset.recipient || '-';
+            timeEl.textContent = card.dataset.time || '-';
+            contentEl.textContent = card.dataset.content || '-';
+
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeMessageModal() {
+            if (!modal) return;
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+        }
+
+        document.querySelectorAll('.message-card').forEach(card => {
+            card.addEventListener('click', () => openMessageModal(card));
+            card.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    openMessageModal(card);
+                }
+            });
+        });
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeMessageModal);
+        }
+
+        if (modal) {
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    closeMessageModal();
+                }
+            });
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeMessageModal();
+            }
+        });
+    });
+</script>

@@ -318,6 +318,165 @@ public class IndexModel : PageModel
     // POST /Board?handler=CreateTicket
     // =========================================================
 
+    public async Task<IActionResult> OnPostDeleteTicketAsync(long id)
+    {
+        var userId = GetCurrentUserId();
+
+        if (userId == null)
+        {
+            return new JsonResult(new { success = false, message = "Phiên đăng nhập đã hết hạn." }) { StatusCode = 401 };
+        }
+
+        if (id <= 0)
+        {
+            return new JsonResult(new { success = false, message = "ID công việc không hợp lệ." }) { StatusCode = 400 };
+        }
+
+        var boardResponse = await _supabase
+            .From<BoardModel>()
+            .Where(x => x.UserId == userId.Value)
+            .Get();
+
+        var board = boardResponse.Models.FirstOrDefault();
+
+        if (board == null)
+        {
+            return new JsonResult(new { success = false, message = "Không tìm thấy Board của bạn." }) { StatusCode = 404 };
+        }
+
+        var ticketResponse = await _supabase
+            .From<Ticket>()
+            .Where(x => x.Id == id)
+            .Get();
+
+        var ticket = ticketResponse.Models.FirstOrDefault();
+
+        if (ticket == null)
+        {
+            return new JsonResult(new { success = false, message = "Không tìm thấy công việc." }) { StatusCode = 404 };
+        }
+
+        var columnResponse = await _supabase
+            .From<BoardColumn>()
+            .Where(x => x.Id == ticket.ColumnId && x.BoardId == board.Id)
+            .Get();
+
+        if (!columnResponse.Models.Any())
+        {
+            return new JsonResult(new { success = false, message = "Công việc không thuộc Board của bạn." }) { StatusCode = 400 };
+        }
+
+        await _supabase
+            .From<Ticket>()
+            .Delete(ticket);
+
+        return new JsonResult(new { success = true, message = "Xóa công việc thành công." });
+    }
+
+    public async Task<IActionResult> OnPostNextTicketAsync(
+        [FromBody] MoveTicketRequest? request)
+    {
+        var userId = GetCurrentUserId();
+
+        if (userId == null)
+        {
+            return new JsonResult(new { success = false, message = "Phiên đăng nhập đã hết hạn." }) { StatusCode = 401 };
+        }
+
+        if (request == null || request.Id <= 0)
+        {
+            return new JsonResult(new { success = false, message = "Dữ liệu chuyển tiếp không hợp lệ." }) { StatusCode = 400 };
+        }
+
+        if (request.ColumnId <= 0)
+        {
+            return new JsonResult(new { success = false, message = "Giai đoạn tiếp theo không hợp lệ." }) { StatusCode = 400 };
+        }
+
+        var boardResponse = await _supabase
+            .From<BoardModel>()
+            .Where(x => x.UserId == userId.Value)
+            .Get();
+
+        var board = boardResponse.Models.FirstOrDefault();
+
+        if (board == null)
+        {
+            return new JsonResult(new { success = false, message = "Không tìm thấy Board của bạn." }) { StatusCode = 404 };
+        }
+
+        var ticketResponse = await _supabase
+            .From<Ticket>()
+            .Where(x => x.Id == request.Id)
+            .Get();
+
+        var ticket = ticketResponse.Models.FirstOrDefault();
+
+        if (ticket == null)
+        {
+            return new JsonResult(new { success = false, message = "Không tìm thấy công việc." }) { StatusCode = 404 };
+        }
+
+        var columnResponse = await _supabase
+            .From<BoardColumn>()
+            .Where(x => x.BoardId == board.Id)
+            .Get();
+
+        var columns = columnResponse.Models
+            .OrderBy(x => x.Position)
+            .ToList();
+
+        var currentColumn = columns.FirstOrDefault(x => x.Id == ticket.ColumnId);
+
+        if (currentColumn == null)
+        {
+            return new JsonResult(new { success = false, message = "Công việc không thuộc Board của bạn." }) { StatusCode = 400 };
+        }
+
+        var currentIndex = columns.FindIndex(x => x.Id == currentColumn.Id);
+        var nextColumn = currentIndex >= 0 && currentIndex < columns.Count - 1
+            ? columns[currentIndex + 1]
+            : null;
+
+        if (nextColumn == null)
+        {
+            return new JsonResult(new { success = false, message = "Công việc đã ở giai đoạn cuối." });
+        }
+
+        if (request.ColumnId != nextColumn.Id)
+        {
+            return new JsonResult(new { success = false, message = "Giai đoạn tiếp theo không khớp với tiến độ hiện tại." }) { StatusCode = 400 };
+        }
+
+        var nextTicketResponse = await _supabase
+            .From<Ticket>()
+            .Where(x => x.ColumnId == nextColumn.Id)
+            .Get();
+
+        var nextPosition = nextTicketResponse.Models.Any()
+            ? nextTicketResponse.Models.Max(x => x.Position) + 1
+            : 0;
+
+        ticket.ColumnId = nextColumn.Id;
+        ticket.Position = nextPosition;
+
+        await _supabase
+            .From<Ticket>()
+            .Update(ticket);
+
+        return new JsonResult(new
+        {
+            success = true,
+            message = "Công việc đã chuyển sang giai đoạn tiếp theo.",
+            ticket = new
+            {
+                id = ticket.Id,
+                columnId = nextColumn.Id,
+                columnName = nextColumn.Name
+            }
+        });
+    }
+
     public async Task<IActionResult> OnPostCreateTicketAsync(
         [FromBody] CreateTicketRequest? request)
     {
@@ -675,7 +834,7 @@ public class IndexModel : PageModel
                         boardId,
 
                     Name =
-                        "To do",
+                        "Chuẩn bị",
 
                     Position =
                         0,
@@ -878,6 +1037,13 @@ public class CreateTicketRequest
 
     public string? Priority { get; set; }
         = "Medium";
+}
+
+public class MoveTicketRequest
+{
+    public long Id { get; set; }
+
+    public long ColumnId { get; set; }
 }
 
 

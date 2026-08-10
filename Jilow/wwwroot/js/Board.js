@@ -15,6 +15,8 @@ const BOARD_URL =
 
 let selectedColumnId = null;
 
+let currentTicketId = null;
+
 let isCreatingTicket = false;
 
 
@@ -175,6 +177,34 @@ function initializeBoard() {
         cancelCreateTask.addEventListener(
             "click",
             closeCreateTaskModal
+        );
+    }
+
+    const nextTaskBtn =
+        document.getElementById(
+            "nextTaskBtn"
+        );
+
+
+    if (nextTaskBtn) {
+
+        nextTaskBtn.addEventListener(
+            "click",
+            handleNextTicket
+        );
+    }
+
+    const deleteTaskBtn =
+        document.getElementById(
+            "deleteTaskBtn"
+        );
+
+
+    if (deleteTaskBtn) {
+
+        deleteTaskBtn.addEventListener(
+            "click",
+            handleDeleteTicket
         );
     }
 
@@ -347,15 +377,9 @@ function openCreateTaskModal(
 
 
     isCreatingTicket = false;
-
-
-    modal.classList.add(
-        "active"
-    );
-
-
-    modal.style.display =
-        "flex";
+    modal.setAttribute("aria-hidden", "false");
+    modal.classList.add("active");
+    modal.style.display = "flex";
 
 
     setTimeout(
@@ -398,8 +422,7 @@ function closeCreateTaskModal() {
     modal.classList.remove(
         "active"
     );
-
-
+    modal.setAttribute("aria-hidden", "true");
     modal.style.display =
         "none";
 
@@ -1421,6 +1444,38 @@ function populateTicketDetail(
     ticket
 ) {
 
+    currentTicketId =
+        Number(ticket?.id) || null;
+
+    const nextButton =
+        document.getElementById(
+            "nextTaskBtn"
+        );
+
+    if (nextButton) {
+        const currentColumnId =
+            Number(ticket?.columnId) || null;
+
+        const currentColumnIndex =
+            Array.from(
+                document.querySelectorAll(
+                    ".board-column[data-column-id]"
+                )
+            ).findIndex(
+                column =>
+                    Number(column.dataset.columnId) === currentColumnId
+            );
+
+        const hasNextColumn =
+            currentColumnIndex >= 0 &&
+            currentColumnIndex <
+                document.querySelectorAll(
+                    ".board-column[data-column-id]"
+                ).length - 1;
+
+        nextButton.hidden = !hasNextColumn;
+    }
+
     setText(
         "detailTaskKey",
         ticket.key || ""
@@ -1498,6 +1553,7 @@ function openTaskDetailModal() {
     }
 
 
+    modal.setAttribute("aria-hidden", "false");
     modal.classList.add(
         "active"
     );
@@ -1529,10 +1585,12 @@ function closeTaskDetailModal() {
     modal.classList.remove(
         "active"
     );
-
+    modal.setAttribute("aria-hidden", "true");
 
     modal.style.display =
         "none";
+
+    currentTicketId = null;
 }
 
 
@@ -1663,6 +1721,207 @@ function restoreSubmitButton(
 /* =========================================================
    SET TEXT
    ========================================================= */
+
+async function handleNextTicket() {
+
+    if (!currentTicketId) {
+        showBoardMessage(
+            "Không có công việc nào được chọn.",
+            "error"
+        );
+        return;
+    }
+
+    const currentColumnId =
+        Number(
+            document.querySelector(
+                `.task-card[data-task-id="${currentTicketId}"]`
+            )?.closest(".board-column")?.dataset?.columnId || 0
+        );
+
+    if (!currentColumnId) {
+        showBoardMessage(
+            "Không xác định được giai đoạn hiện tại.",
+            "error"
+        );
+        return;
+    }
+
+    const boardColumns =
+        Array.from(
+            document.querySelectorAll(
+                ".board-column[data-column-id]"
+            )
+        );
+
+    const currentIndex =
+        boardColumns.findIndex(
+            column =>
+                Number(column.dataset.columnId) === currentColumnId
+        );
+
+    const nextColumn =
+        currentIndex >= 0 &&
+        currentIndex < boardColumns.length - 1
+            ? boardColumns[currentIndex + 1]
+            : null;
+
+    if (!nextColumn) {
+        showBoardMessage(
+            "Công việc đã ở giai đoạn cuối.",
+            "info"
+        );
+        return;
+    }
+
+    const nextColumnId =
+        Number(nextColumn.dataset.columnId);
+
+    try {
+        const form = document.getElementById("createTaskForm");
+        const antiForgeryToken =
+            form?.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+        const response = await fetch(
+            `${BOARD_URL}?handler=NextTicket`,
+            {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "RequestVerificationToken": antiForgeryToken || ""
+                },
+                body: JSON.stringify({
+                    id: currentTicketId,
+                    columnId: nextColumnId
+                })
+            }
+        );
+
+        const responseText = await response.text();
+        let data = null;
+
+        if (responseText) {
+            try {
+                data = JSON.parse(responseText);
+            } catch (error) {
+                console.warn("[Board] Next response không phải JSON:", responseText);
+            }
+        }
+
+        if (!response.ok || !data?.success) {
+            throw new Error(data?.message || "Không thể chuyển tiếp công việc.");
+        }
+
+        const currentCard =
+            document.querySelector(
+                `.task-card[data-task-id="${currentTicketId}"]`
+            );
+
+        const currentColumn =
+            currentCard?.closest(".board-column");
+
+        const nextTaskList =
+            nextColumn.querySelector(".task-list");
+
+        if (currentCard && nextTaskList) {
+            const emptyColumn =
+                nextTaskList.querySelector(".empty-column");
+
+            if (emptyColumn) {
+                emptyColumn.remove();
+            }
+
+            nextTaskList.insertBefore(
+                currentCard,
+                nextTaskList.querySelector(".add-task-inline")
+            );
+        }
+
+        if (currentColumn) {
+            updateColumnCount(currentColumn);
+        }
+
+        updateColumnCount(nextColumn);
+        closeTaskDetailModal();
+        showBoardMessage(data.message || "Công việc đã chuyển sang giai đoạn tiếp theo.", "success");
+    }
+    catch (error) {
+        console.error("[Board] Next ticket error:", error);
+        showBoardMessage(error.message || "Không thể chuyển tiếp công việc.", "error");
+    }
+}
+
+async function handleDeleteTicket() {
+
+    if (!currentTicketId) {
+        showBoardMessage(
+            "Không có công việc nào được chọn.",
+            "error"
+        );
+        return;
+    }
+
+    const confirmed = window.confirm(
+        "Bạn có chắc muốn xóa công việc này?"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        const form = document.getElementById("createTaskForm");
+        const antiForgeryToken =
+            form?.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+        const response = await fetch(
+            `${BOARD_URL}?handler=DeleteTicket&id=${encodeURIComponent(currentTicketId)}`,
+            {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Accept": "application/json",
+                    "RequestVerificationToken": antiForgeryToken || ""
+                }
+            }
+        );
+
+        const responseText = await response.text();
+        let data = null;
+
+        if (responseText) {
+            try {
+                data = JSON.parse(responseText);
+            } catch (error) {
+                console.warn("[Board] Delete response không phải JSON:", responseText);
+            }
+        }
+
+        if (!response.ok || !data?.success) {
+            throw new Error(data?.message || "Không thể xóa công việc.");
+        }
+
+        const card = document.querySelector(`.task-card[data-task-id="${currentTicketId}"]`);
+        const column = card?.closest(".board-column");
+
+        if (card) {
+            card.remove();
+        }
+
+        if (column) {
+            updateColumnCount(column);
+        }
+
+        closeTaskDetailModal();
+        showBoardMessage(data.message || "Xóa công việc thành công.", "success");
+    }
+    catch (error) {
+        console.error("[Board] Delete ticket error:", error);
+        showBoardMessage(error.message || "Không thể xóa công việc.", "error");
+    }
+}
 
 function setText(
     id,
